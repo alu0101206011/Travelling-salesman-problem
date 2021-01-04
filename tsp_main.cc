@@ -4,7 +4,7 @@
 /// Computabilidad y algoritmia
 ///
 /// @author Anabel Díaz Labrador <alu0101206011@ull.edu.es>
-/// @date 4 Jan 2021
+/// @date 2 Jan 2021
 /// @brief 
 ///
 /// @see https://en.wikipedia.org/wiki/Greedy_algorithm
@@ -20,18 +20,23 @@
 
 #include "tsp.h"
 
-const std::string kHelpText = "hola";
+const std::string kHelpText = "";
 
 void Usage(int, char**);
 
+/// Main function
+/// @param[in] argc Number of command line parameters
+/// @param[in] argv Vector containing (char*) the parameters
 int main(int argc, char *argv[]) {
   Usage(argc, argv);
   int error = 0;
-  const std::string hola(argv[1]);
-  Tsp experiment(hola, error);
+  const std::string infile(argv[1]);
+  Tsp experiment(infile, error);
   if (error) {
     std::cout << "The file could not be opened.\n";
+    return 1;
   }
+  experiment.write();
   float distance = 0;
   std::cout << "Path: 1";
   for (unsigned element : experiment.Path(distance) ) {
@@ -41,15 +46,19 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
+/// @brief Funtion that show the usage of this program
+/// @param[in] argc Number of command line parameters
+/// @param[in] argv Vector containing (char*) the parameters
 void Usage(int argc, char *argv[]) {
   if (argc != 2) {
-    std::cout << "Usage: " << argv[0] << " *.txt\n";
+    std::cout << "Usage: " << argv[0] << " [FILE]\n";
     std::cout << "Try " << argv[0] << " --help for more information.\n";
     exit(1);
   }
   std::string parameter{argv[1]};
   if (parameter == "--help" || parameter == "-h") {
-    std::cout << kHelpText << std::endl;
-    exit(1);
-  } 
+    std::cout << "Usage: " << argv[0] << " [FILE]" << "\nThis program show the "
+              << "shortest path that passes through all the nodes.\n";
+    exit(0);
+  }
 }

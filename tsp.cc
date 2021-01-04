@@ -4,14 +4,8 @@
 /// Computabilidad y algoritmia
 ///
 /// @author Anabel Díaz Labrador <alu0101206011@ull.edu.es>
-/// @date 4 Jan 2021
-/// @brief 
-///
-/// @see https://en.wikipedia.org/wiki/Greedy_algorithm
-/// @see https://en.wikipedia.org/wiki/Travelling_salesman_problem
-///
-/// To compile: make
-/// To clean files: make clean
+/// @date 3 Jan 2021
+/// @brief Tsp methods implementation
 
 #include <iostream>
 #include <fstream>
@@ -20,9 +14,9 @@
 
 #include "tsp.h"
 
-//
-Tsp::Tsp(const std::string& text, int& flag) {
-  std::ifstream reader(text, std::ios::in);
+// Constructor
+Tsp::Tsp(const std::string& file, int& flag) {
+  std::ifstream reader(file, std::ios::in);
   if (!reader) {
     flag = 1;  // No works
     return;
@@ -38,7 +32,7 @@ Tsp::Tsp(const std::string& text, int& flag) {
   int first_place, second_place;
 
   for (unsigned i = 0; i < number_edges_; i++) {
-    if (directed_ == 1) {
+    if (directed_) {
       reader >> index;
       reader >> aux.node;
       reader >> aux.distance;
@@ -56,7 +50,7 @@ Tsp::Tsp(const std::string& text, int& flag) {
   reader.close();
 }
 
-//
+// Default destructor
 Tsp::~Tsp() {}
 
 unsigned Tsp::get_number_nodes(void) const { return number_nodes_; }
@@ -73,8 +67,8 @@ void Tsp::set_directed(const unsigned kNewDirected) {
   directed_ = kNewDirected; 
 }
 
-// 
-std::vector<unsigned> Tsp::Path(float& distance) {
+// Method to find the shortest path that passes through all the nodes.
+std::vector<unsigned> Tsp::Path(float& distance) const {
   distance = 0;
   float min_distance = FLT_MAX;
   std::vector<unsigned> solution(number_nodes_);
@@ -82,10 +76,13 @@ std::vector<unsigned> Tsp::Path(float& distance) {
   unsigned current_node = 0, next_node = 0, counter = 0;
   visited[0] = true;
 
-   while (current_node < graph_.size() && next_node < graph_[current_node].size() && solution.size() != counter) {
-    if (solution.size() - 1 == counter) visited[0] = false;
+  while (current_node < graph_.size() && 
+         next_node < graph_[current_node].size() && 
+         solution.size() != counter) {
 
-    if (graph_[current_node][next_node].node != current_node + 1 && !visited[graph_[current_node][next_node].node - 1])
+    if (solution.size() - 1 == counter) visited[0] = false;  // Unblock the start node
+    if (graph_[current_node][next_node].node != current_node + 1 && 
+        !visited[graph_[current_node][next_node].node - 1])
       if (graph_[current_node][next_node].distance < min_distance) {
         min_distance = graph_[current_node][next_node].distance;
         solution[counter] = graph_[current_node][next_node].node;
@@ -94,7 +91,7 @@ std::vector<unsigned> Tsp::Path(float& distance) {
     if (next_node == graph_[current_node].size()) {
       distance += min_distance;
       min_distance = FLT_MAX;
-      visited[solution[counter] - 1] = true;  // Ponemos a visitado la solucion elegida
+      visited[solution[counter] - 1] = true;
       next_node = 0;
       current_node = solution[counter] - 1;
       counter++;
@@ -103,14 +100,13 @@ std::vector<unsigned> Tsp::Path(float& distance) {
   return solution;
 }
 
-//
+// Write the graph
 void Tsp::write(void) const {
-  std::cout << "Lista:\n";
-  for(int i = 0; i < graph_.size(); i++) {
-    std::cout << "Nodo [" << i + 1 << "] : ";
-    if(graph_[i].size() == 0)
-      std::cout << "NULL  ";
-    for(int j=0; j < graph_[i].size(); j++)
+  std::cout << "List:\n";
+  for (int i = 0; i < graph_.size(); i++) {
+    std::cout << "Node [" << i + 1 << "] : ";
+    if (graph_[i].size() == 0) std::cout << "NULL  ";
+    for (int j = 0; j < graph_[i].size(); j++)
       std::cout << graph_[i][j].node << " ";
     std::cout << "\n";
   }

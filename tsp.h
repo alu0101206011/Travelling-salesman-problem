@@ -1,29 +1,35 @@
-/// @class NextNode
-///
-/// @brief 
+/// Universidad de La Laguna
+/// Escuela Superior de Ingeniería y Tecnología
+/// Grado en Ingeniería Informática
+/// Computabilidad y algoritmia
 ///
 /// @author Anabel Díaz Labrador <alu0101206011@ull.edu.es>
-/// @date 31 Dic 2020
-struct NextNode {
-	unsigned node; // nodo
-	float distance; // atributo para expresar su peso, longitud, coste...
-  
-};
+/// @date 2 Jan 2021
+/// @brief This file declares the Tsp class and a struct that is used by an attribute.
+
+/// @struct NextNode
+/// @brief This struct stores successor node info.
+struct NextNode;
 
 typedef std::vector<NextNode> Candidates;
 
-/// @class Tsp
-///
-/// @brief 
-///
+/// @class Tsp (Travelling seller problem)
+/// @brief This class makes a graph to build the shortest path 
+/// that passes through all the nodes.
 class Tsp {
  private:
-  unsigned number_nodes_;
-	unsigned number_edges_;
-	unsigned directed_;  // almacena 0 si el grafo es no dirigido, 1 eoc
-  std::vector<Candidates> graph_;
+  unsigned number_nodes_;  // Total number of nodes
+	unsigned number_edges_;  // Total number of edges
+	bool directed_;  // It is true if is a directed graph
+  std::vector<Candidates> graph_;  // Vectors vector of successor nodes
  public:
-  Tsp(const std::string& text, int& flag);
+  /// Constructor
+  /// @param file
+  /// @param flag sends a nonzero number if the constructor ends with
+  /// an error.
+  Tsp(const std::string& file, int& flag);
+
+  /// Default destructor
   ~Tsp();
 
   unsigned get_number_nodes(void) const;
@@ -34,24 +40,19 @@ class Tsp {
   void set_number_edges(const unsigned);
   void set_directed(const unsigned);
 
-  std::vector<unsigned> Path(float&);
-  //GreedyFuntion
+  /// @brief Method to find the shortest path that passes through all 
+  /// the nodes.
+  /// @param distance This parameter return the minimal distance (The value 
+  /// of this variable will be totally modified).
+  /// @return The minimal path. If minimal path contains some zero, the path could
+  /// not be found.
+  std::vector<unsigned> Path(float& distance) const;
 
+  /// @brief Write the graph
   void write(void) const;
 };
 
-
-/*
-función voraz(C: conjunto): conjunto { // C es el conjunto de candidatos
-  S <- Ø // conjunto de la solución
-  mientras C ≠ Ø y no solución(S) hacer {
-    x <- seleccionar(C)
-    C <- C - {x} // quitamos x de C
-    si factible(S ∪ {x}) entonces
-    S <- S ∪ {x}
-  }
-  si solución(S) entonces devolver S
-  en otro caso devolver NO_HAY_SOLUCIÓN
-}
-*/
-
+struct NextNode {
+	unsigned node; // node of next node
+	float distance; // edge distance between parent node and child node
+};
