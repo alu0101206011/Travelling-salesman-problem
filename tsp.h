@@ -13,32 +13,28 @@ struct NextNode;
 
 typedef std::vector<NextNode> Candidates;
 
-/// @class Tsp (Travelling seller problem)
+/// @class Tsp (Travelling salesman problem)
 /// @brief This class makes a graph to build the shortest path 
 /// that passes through all the nodes.
 class Tsp {
  private:
   unsigned number_nodes_;  // Total number of nodes
-	unsigned number_edges_;  // Total number of edges
-	bool directed_;  // It is true if is a directed graph
   std::vector<Candidates> graph_;  // Vectors vector of successor nodes
  public:
   /// Constructor
   /// @param file
   /// @param flag sends a nonzero number if the constructor ends with
   /// an error.
-  Tsp(const std::string& file, int& flag);
+  Tsp(const std::string& file, int& error, int directed);
 
   /// Default destructor
   ~Tsp();
 
   unsigned get_number_nodes(void) const;
-  unsigned get_number_edges(void) const;
-  unsigned get_directed(void) const;
+  std::vector<Candidates> get_graph(void) const;
 
   void set_number_nodes(const unsigned);
-  void set_number_edges(const unsigned);
-  void set_directed(const unsigned);
+  void set_graph(const std::vector<Candidates>);
 
   /// @brief Method to find the shortest path that passes through all 
   /// the nodes.
@@ -46,7 +42,8 @@ class Tsp {
   /// of this variable will be totally modified).
   /// @return The minimal path. If minimal path contains some zero, the path could
   /// not be found.
-  std::vector<unsigned> Path(float& distance) const;
+  std::vector<unsigned> GreedyAlgorithm(float& distance, int initial_node) const;
+  std::vector<unsigned> ImprovedAlgorithm(float& distance, int initial_node) const;
 
   /// @brief Write the graph
   void write(void) const;

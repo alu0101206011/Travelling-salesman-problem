@@ -31,17 +31,19 @@ int main(int argc, char *argv[]) {
   Usage(argc, argv);
   int error = 0;
   const std::string infile(argv[1]);
-  Tsp experiment(infile, error);
+  Tsp experiment(infile, error, 0);
   if (error) {
     std::cout << "The file could not be opened.\n";
     return 1;
   }
   experiment.write();
+  int initial_node = 1;
   float distance = 0;
-  std::cout << "Path: 1";
-  for (unsigned element : experiment.Path(distance) ) {
-    std::cout << "-" << element;
+  std::cout << "S = {" << initial_node;
+  for (unsigned element : experiment.GreedyAlgorithm(distance, initial_node) ) {
+    std::cout << ", " << element;
   }
+  std::cout << "}";
   std::cout << "\nDistance: " << distance << "km\n";
   return 0;
 }
