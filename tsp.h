@@ -20,6 +20,7 @@ class Tsp {
  private:
   unsigned number_nodes_;  // Total number of nodes
   std::vector<Candidates> graph_;  // Vectors vector of successor nodes
+  std::vector<unsigned> solution_;  // Solution path
  public:
   /// Constructor
   /// @param file
@@ -42,12 +43,28 @@ class Tsp {
   /// of this variable will be totally modified).
   /// @return The minimal path. If minimal path contains some zero, the path could
   /// not be found.
-  std::vector<unsigned> GreedyAlgorithm(float& distance, int initial_node) const;
+  std::vector<unsigned> GreedyAlgorithm(float& distance, int initial_node);
+
+  /// @brief Method with improved algorithm to find the optimal solution
+  /// @param distance This is the final result
+  /// @param initial_node 
   std::vector<unsigned> ImprovedAlgorithm(float& distance, int initial_node);
-  void RecursiveAlgorithm(std::vector<bool> &visited, int currPos, int count, float cost, float &new_distance, int initial_node, std::vector<unsigned> path, std::vector<unsigned>& solution_path);
+  
 
   /// @brief Write the graph
   void write(void) const;
+
+ private:
+  /// @brief Recursive algorithim uses backtracking to get the optimal solution
+  /// @param visited Vector with visited nodes
+  /// @param currPos Current node
+  /// @param count This is the value of nodes that have been visited
+  /// @param cost distance to reach the next node
+  /// @param new_distance final distance
+  /// @param initial_node 
+  /// @param path current path
+  void RecursiveAlgorithm(std::vector<bool> &visited, int currPos, int count, float cost, 
+                          float &new_distance, int initial_node, std::vector<unsigned> path);
 };
 
 struct NextNode {

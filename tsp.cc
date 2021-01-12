@@ -63,60 +63,60 @@ void Tsp::set_graph(const std::vector<Candidates> kNewGraph) {
 }
 
 // Method to find the shortest path that passes through all the nodes.
-std::vector<unsigned> Tsp::GreedyAlgorithm(float& distance, int initial_node = 1) const {
+std::vector<unsigned> Tsp::GreedyAlgorithm(float& distance, int initial_node = 1) {
   distance = 0;
+  solution_.clear();
+  solution_.resize(number_nodes_);
   float min_distance = FLT_MAX;
-  std::vector<unsigned> solution(number_nodes_);
   std::vector<bool> visited(number_nodes_,false);
   unsigned current_node = initial_node - 1, next_node = 0, counter = 0;
   visited[initial_node - 1] = true;
   while (current_node < graph_.size() && 
          next_node < graph_[current_node].size() && 
-         solution.size() != counter) {
-    if (solution.size() - 1 == counter) visited[initial_node - 1] = false;  // Unblock the start node
+         solution_.size() != counter) {
+    if (solution_.size() - 1 == counter) visited[initial_node - 1] = false;  // Unblock the start node
     if (graph_[current_node][next_node].node != current_node + 1 && 
         !visited[graph_[current_node][next_node].node - 1])
       if (graph_[current_node][next_node].distance < min_distance) {
         min_distance = graph_[current_node][next_node].distance;
-        solution[counter] = graph_[current_node][next_node].node;
+        solution_[counter] = graph_[current_node][next_node].node;
       }
     next_node++;
     if (next_node == graph_[current_node].size()) {
       distance += min_distance;
       min_distance = FLT_MAX;
-      visited[solution[counter] - 1] = true;
+      visited[solution_[counter] - 1] = true;
       next_node = 0;
-      current_node = solution[counter] - 1;
+      current_node = solution_[counter] - 1;
       counter++;
     }
   }
-  return solution;
+  return solution_;
 }
 
+// Method with improved algorithm to find the optimal solution
 std::vector<unsigned> Tsp::ImprovedAlgorithm(float& distance, int initial_node) {
   std::vector<bool> visited(number_nodes_, false);
   distance = 0;
-  // Mark 0th node as visited
-  visited[0] = true;
-  std::vector<unsigned> solution;
+  solution_.clear();
+  visited[initial_node - 1] = true;
+  std::vector<unsigned> path;
   float min_distance = FLT_MAX;
-  RecursiveAlgorithm(visited, initial_node, 0, 0, min_distance, initial_node, 
-                     solution, solution);
+  RecursiveAlgorithm(visited, initial_node, 0, 0, min_distance, initial_node, path);
   distance = min_distance;
-  return solution;
+  return solution_;
 }
 
+// Recursive algorithim uses backtracking to get the optimal solution
 void Tsp::RecursiveAlgorithm(std::vector<bool> &visited, int currPos, 
                              int count, float cost, float &new_distance, 
-                             int initial_node, std::vector<unsigned> path, 
-                             std::vector<unsigned>& solution_path) {
-  // comprueba todos los sucesores
+                             int initial_node, std::vector<unsigned> path) {
   for (int i = 0; i < graph_[currPos - 1].size(); i++) { 
-    if (count == number_nodes_ - 1 && graph_[currPos - 1][i].node == initial_node) { // He vuelto al inicio 
+    if (count == number_nodes_ - 1 && graph_[currPos - 1][i].node == initial_node) { // Back to the start 
       if (new_distance > cost + graph_[currPos - 1][i].distance) {
         new_distance = cost + graph_[currPos - 1][i].distance;
-        solution_path = path;
-        solution_path.push_back(initial_node);
+        solution_ = path;
+        solution_.push_back(initial_node);
       }
       return;
     }
@@ -128,8 +128,8 @@ void Tsp::RecursiveAlgorithm(std::vector<bool> &visited, int currPos,
 
       RecursiveAlgorithm(visited, graph_[currPos - 1][i].node, count + 1, 
                          cost + graph_[currPos - 1][i].distance, new_distance, 
-                         initial_node, path, solution_path);
-      
+                         initial_node, path);
+
       visited[graph_[currPos - 1][i].node - 1] = false;
       path.pop_back();
     }
