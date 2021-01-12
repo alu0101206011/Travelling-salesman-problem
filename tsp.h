@@ -43,7 +43,8 @@ class Tsp {
   /// @return The minimal path. If minimal path contains some zero, the path could
   /// not be found.
   std::vector<unsigned> GreedyAlgorithm(float& distance, int initial_node) const;
-  std::vector<unsigned> ImprovedAlgorithm(float& distance, int initial_node) const;
+  std::vector<unsigned> ImprovedAlgorithm(float& distance, int initial_node);
+  void RecursiveAlgorithm(std::vector<bool> &visited, int currPos, int count, float cost, float &new_distance, int initial_node, std::vector<unsigned> path, std::vector<unsigned>& solution_path);
 
   /// @brief Write the graph
   void write(void) const;

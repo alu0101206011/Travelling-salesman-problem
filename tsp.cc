@@ -11,6 +11,7 @@
 #include <fstream>
 #include <vector>
 #include <cfloat>
+#include <algorithm>
 
 #include "tsp.h"
 
@@ -92,34 +93,47 @@ std::vector<unsigned> Tsp::GreedyAlgorithm(float& distance, int initial_node = 1
   return solution;
 }
 
-std::vector<unsigned> Tsp::ImprovedAlgorithm(float& distance, int initial_node = 1) const {
+std::vector<unsigned> Tsp::ImprovedAlgorithm(float& distance, int initial_node) {
+  std::vector<bool> visited(number_nodes_, false);
   distance = 0;
-  float min_distance = FLT_MAX;
-  std::vector<unsigned> solution(number_nodes_);
-  std::vector<bool> visited(number_nodes_,false);
-  unsigned current_node = 0, next_node = 0, counter = 0;
+  // Mark 0th node as visited
   visited[0] = true;
-  while (current_node < graph_.size() && 
-         next_node < graph_[current_node].size() && 
-         solution.size() != counter) {
-    if (solution.size() - 1 == counter) visited[0] = false;  // Unblock the start node
-    if (graph_[current_node][next_node].node != current_node + 1 && 
-        !visited[graph_[current_node][next_node].node - 1])
-      if (graph_[current_node][next_node].distance < min_distance) {
-        min_distance = graph_[current_node][next_node].distance;
-        solution[counter] = graph_[current_node][next_node].node;
+  std::vector<unsigned> solution;
+  float min_distance = FLT_MAX;
+  RecursiveAlgorithm(visited, initial_node, 0, 0, min_distance, initial_node, 
+                     solution, solution);
+  distance = min_distance;
+  return solution;
+}
+
+void Tsp::RecursiveAlgorithm(std::vector<bool> &visited, int currPos, 
+                             int count, float cost, float &new_distance, 
+                             int initial_node, std::vector<unsigned> path, 
+                             std::vector<unsigned>& solution_path) {
+  // comprueba todos los sucesores
+  for (int i = 0; i < graph_[currPos - 1].size(); i++) { 
+    if (count == number_nodes_ - 1 && graph_[currPos - 1][i].node == initial_node) { // He vuelto al inicio 
+      if (new_distance > cost + graph_[currPos - 1][i].distance) {
+        new_distance = cost + graph_[currPos - 1][i].distance;
+        solution_path = path;
+        solution_path.push_back(initial_node);
       }
-    next_node++;
-    if (next_node == graph_[current_node].size()) {
-      distance += min_distance;
-      min_distance = FLT_MAX;
-      visited[solution[counter] - 1] = true;
-      next_node = 0;
-      current_node = solution[counter] - 1;
-      counter++;
+      return;
     }
   }
-  return solution;
+  for (int i = 0; i < graph_[currPos - 1].size(); i++) {
+    if (!visited[graph_[currPos - 1][i].node - 1] && graph_[currPos - 1][i].node != initial_node) {
+      visited[graph_[currPos - 1][i].node - 1] = true;
+      path.push_back(graph_[currPos - 1][i].node);
+
+      RecursiveAlgorithm(visited, graph_[currPos - 1][i].node, count + 1, 
+                         cost + graph_[currPos - 1][i].distance, new_distance, 
+                         initial_node, path, solution_path);
+      
+      visited[graph_[currPos - 1][i].node - 1] = false;
+      path.pop_back();
+    }
+  }
 }
 
 // Write the graph

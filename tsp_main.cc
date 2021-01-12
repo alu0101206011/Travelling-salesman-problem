@@ -45,6 +45,13 @@ int main(int argc, char *argv[]) {
   }
   std::cout << "}";
   std::cout << "\nDistance: " << distance << "km\n";
+
+  std::cout << "Solucion mejorada = {" << initial_node;
+  for (unsigned element : experiment.ImprovedAlgorithm(distance, initial_node) ) {
+    std::cout << ", " << element;
+  } 
+  std::cout << "}";
+  std::cout << "\nDistance: " << distance << "km\n";
   return 0;
 }
 
