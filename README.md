@@ -1,4 +1,4 @@
-# El-viajante-de-comercio
+# Práctica 12 El-viajante-de-comercio 
 El objetivo principal de esta práctica consiste en desarrollar un ejemplo de Algoritmo Voraz (Greedy) como es el viajante de comer. Para ello, se detalla a continuación las clases STL necesarias, los requisitos funcionales mínimos y opcionales, ejemplo de prueba, y los criterios de evaluación.
 
 Clases STL necesarias
